@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/controls_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <com.xoureldeen.vectrasbox.controls.EditableControlsLayout
+        android:id="@+id/editable_controls"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:splitMotionEvents="true">
+
+        <Button
+            android:id="@+id/e_button"
+            android:tag="e"
+            style="@style/Widget.VectrasBox.VectrasControl"
+            android:layout_gravity="top|start"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="12dp"
+            android:text="E" />
+
+        <Button
+            android:id="@+id/q_button"
+            android:tag="q"
+            style="@style/Widget.VectrasBox.VectrasControl"
+            android:layout_gravity="top|start"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="66dp"
+            android:text="Q" />
+
+        <Button
+            android:id="@+id/r_button"
+            android:tag="r"
+            style="@style/Widget.VectrasBox.VectrasControl"
+            android:layout_gravity="top|end"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="15dp"
+            android:text="R" />
+
+        <Button
+            android:id="@+id/x_button"
+            android:tag="x"
+            style="@style/Widget.VectrasBox.VectrasControl"
+            android:layout_gravity="top|end"
+            android:layout_marginTop="66dp"
+            android:layout_marginEnd="15dp"
+            android:text="X" />
+
+        <Button
+            android:id="@+id/del_button"
+            android:tag="del"
+            style="@style/Widget.VectrasBox.VectrasControl"
+            android:layout_gravity="top|end"
+            android:layout_marginTop="120dp"
+            android:layout_marginEnd="15dp"
+            android:text="DEL"
+            android:textSize="10sp" />
+
+        <Button
+            android:id="@+id/up_button"
+            android:tag="up"
+            style="@style/Widget.VectrasBox.VectrasControl"
+            android:layout_gravity="bottom|start"
+            android:layout_marginStart="15dp"
+            android:layout_marginBottom="69dp"
+            android:text="↑"
+            android:textSize="24sp" />
+
+        <Button
+            android:id="@+id/down_button"
+            android:tag="down"
+            style="@style/Widget.VectrasBox.VectrasControl"
+            android:layout_gravity="bottom|start"
+            android:layout_marginStart="15dp"
+            android:layout_marginBottom="15dp"
+            android:text="↓"
+            android:textSize="24sp" />
+
+        <Button
+            android:id="@+id/left_button"
+            android:tag="left"
+            style="@style/Widget.VectrasBox.VectrasControl"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="69dp"
+            android:layout_marginBottom="15dp"
+            android:text="←"
+            android:textSize="24sp" />
+
+        <Button
+            android:id="@+id/right_button"
+            android:tag="right"
+            style="@style/Widget.VectrasBox.VectrasControl"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="15dp"
+            android:text="→"
+            android:textSize="24sp" />
+
+        <Button
+            android:id="@+id/ctrl_button"
+            android:tag="ctrl"
+            style="@style/Widget.VectrasBox.VectrasControl"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="69dp"
+            android:layout_marginBottom="69dp"
+            android:text="CTRL"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/enter_button"
+            android:tag="enter"
+            style="@style/Widget.VectrasBox.VectrasControl"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="69dp"
+            android:text="ENTER"
+            android:textSize="10sp" />
+
+        <Button
+            android:id="@+id/tab_button"
+            android:tag="tab"
+            style="@style/Widget.VectrasBox.VectrasControl"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="123dp"
+            android:text="TAB"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/space_button"
+            android:tag="space"
+            style="@style/Widget.VectrasBox.VectrasWideControl"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="15dp"
+            android:text="SPACE"
+            android:textSize="10sp" />
+        <Button
+            android:id="@+id/esc_button"
+            android:tag="esc"
+            style="@style/Widget.VectrasBox.VectrasControl"
+            android:layout_gravity="top|start"
+            android:layout_marginStart="69dp"
+            android:layout_marginTop="12dp"
+            android:text="ESC"
+            android:textSize="10sp" />
+
+        <Button
+            android:id="@+id/f8_button"
+            android:tag="f8"
+            style="@style/Widget.VectrasBox.VectrasControl"
+            android:layout_gravity="top|start"
+            android:layout_marginStart="69dp"
+            android:layout_marginTop="66dp"
+            android:text="F8"
+            android:textSize="10sp" />
+
+        <Button
+            android:id="@+id/f10_button"
+            android:tag="f10"
+            style="@style/Widget.VectrasBox.VectrasControl"
+            android:layout_gravity="top|start"
+            android:layout_marginStart="69dp"
+            android:layout_marginTop="120dp"
+            android:text="F10"
+            android:textSize="10sp" />
+
+        <Button
+            android:id="@+id/c_button"
+            android:tag="c"
+            style="@style/Widget.VectrasBox.VectrasControl"
+            android:layout_gravity="top|start"
+            android:layout_marginStart="123dp"
+            android:layout_marginTop="12dp"
+            android:text="C" />
+
+        <Button
+            android:id="@+id/d_button"
+            android:tag="d"
+            style="@style/Widget.VectrasBox.VectrasControl"
+            android:layout_gravity="top|start"
+            android:layout_marginStart="123dp"
+            android:layout_marginTop="66dp"
+            android:text="D" />
+
+        <Button
+            android:id="@+id/pgup_button"
+            android:tag="pgup"
+            style="@style/Widget.VectrasBox.VectrasControl"
+            android:layout_gravity="bottom|start"
+            android:layout_marginStart="69dp"
+            android:layout_marginBottom="69dp"
+            android:text="PGUP"
+            android:textSize="9sp" />
+
+        <Button
+            android:id="@+id/pgdn_button"
+            android:tag="pgdn"
+            style="@style/Widget.VectrasBox.VectrasControl"
+            android:layout_gravity="bottom|start"
+            android:layout_marginStart="69dp"
+            android:layout_marginBottom="15dp"
+            android:text="PGDN"
+            android:textSize="9sp" />
+
+        <Button
+            android:id="@+id/shift_button"
+            android:tag="shift"
+            style="@style/Widget.VectrasBox.VectrasControl"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="69dp"
+            android:layout_marginBottom="123dp"
+            android:text="SHIFT"
+            android:textSize="10sp" />
+
+        <Button
+            android:id="@+id/alt_button"
+            android:tag="alt"
+            style="@style/Widget.VectrasBox.VectrasControl"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="123dp"
+            android:layout_marginBottom="69dp"
+            android:text="ALT"
+            android:textSize="11sp" />
+    </com.xoureldeen.vectrasbox.controls.EditableControlsLayout>
+
+    <LinearLayout
+        android:id="@+id/controls_toolbar"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/hide_controls_button"
+            style="@style/Widget.VectrasBox.MiniControlButton"
+            android:text="@string/hide" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/edit_controls_button"
+            style="@style/Widget.VectrasBox.MiniControlButton"
+            android:text="@string/edit_controls" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/keyboard_button"
+            style="@style/Widget.VectrasBox.MiniControlButton"
+            android:text="@string/keyboard" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/menu_button"
+            style="@style/Widget.VectrasBox.MiniControlButton"
+            android:text="@string/menu" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cad_button"
+            style="@style/Widget.VectrasBox.MiniControlButton"
+            android:text="@string/ctrl_alt_del" />
+
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/controls_toggle"
+        style="@style/Widget.VectrasBox.ControlButton"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="12dp"
+        android:text="@string/controls"
+        android:visibility="gone" />
+</FrameLayout>

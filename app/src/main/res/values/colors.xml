@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="control_primary">#AECBFA</color>
+    <color name="control_on_primary">#17365D</color>
+    <color name="control_secondary_container">#34495E</color>
+    <color name="control_on_secondary_container">#F5F7FA</color>
+</resources>

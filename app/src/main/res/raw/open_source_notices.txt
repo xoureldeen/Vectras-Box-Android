@@ -1,0 +1,26 @@
+Vectras Box
+Copyright 2026 Vectras LLC
+Licensed under GNU GPL version 2 or later.
+
+PCBox
+Vectras Box uses a modified PCBox native emulator core. PCBox is licensed under GNU GPL version 2 or later.
+https://github.com/PCBox/PCBox
+
+86Box
+PCBox is based on 86Box. Copyright and contributor notices remain in the bundled source tree.
+https://github.com/86Box/86Box
+
+SDL
+SDL is distributed under the zlib license.
+https://github.com/libsdl-org/SDL
+
+Native dependencies
+zlib 1.3.2 is distributed under the zlib license.
+libpng 1.6.53 is distributed under the libpng license.
+FreeType 2.13.3 is distributed under the FreeType License or GNU GPL version 2.
+libsndfile 1.2.2 is distributed under GNU LGPL version 2.1 or later.
+
+Android libraries
+Material Components for Android and AndroidX DrawerLayout are distributed under the Apache License 2.0.
+
+Additional compatible license and copyright files are kept beside their corresponding sources. PCBox ROM and asset archives are imported separately by the user and are not covered by the Vectras Box GPL license.

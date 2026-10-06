@@ -1,0 +1,66 @@
+<resources>
+    <style name="HomeTheme" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/control_primary</item>
+        <item name="colorOnPrimary">@color/control_on_primary</item>
+        <item name="colorSecondaryContainer">@color/control_secondary_container</item>
+        <item name="colorOnSecondaryContainer">@color/control_on_secondary_container</item>
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+    </style>
+    <style name="AppTheme" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/control_primary</item>
+        <item name="colorOnPrimary">@color/control_on_primary</item>
+        <item name="colorSecondaryContainer">@color/control_secondary_container</item>
+        <item name="colorOnSecondaryContainer">@color/control_on_secondary_container</item>
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:navigationBarColor">@android:color/black</item>
+    </style>
+
+    <style name="Widget.VectrasBox.ControlButton" parent="Widget.Material3.Button.TonalButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="android:layout_marginStart">3dp</item>
+        <item name="android:layout_marginEnd">3dp</item>
+        <item name="android:minWidth">52dp</item>
+        <item name="android:minHeight">44dp</item>
+        <item name="android:paddingStart">14dp</item>
+        <item name="android:paddingEnd">14dp</item>
+        <item name="android:textSize">12sp</item>
+        <item name="cornerRadius">14dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:background">@drawable/controls_button</item>
+    </style>
+
+    <style name="Widget.VectrasBox.MiniControlButton" parent="Widget.VectrasBox.ControlButton">
+        <item name="android:layout_height">40dp</item>
+        <item name="android:minHeight">40dp</item>
+        <item name="android:minWidth">44dp</item>
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">10dp</item>
+        <item name="android:textSize">10sp</item>
+    </style>
+
+    <style name="Widget.VectrasBox.VectrasControl" parent="@android:style/Widget.Button">
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:background">@drawable/controls_button1</item>
+        <item name="android:backgroundTint">?attr/colorPrimary</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <style name="Widget.VectrasBox.VectrasWideControl" parent="@style/Widget.VectrasBox.VectrasControl">
+        <item name="android:layout_width">120dp</item>
+        <item name="android:layout_height">40dp</item>
+    </style>
+</resources>
