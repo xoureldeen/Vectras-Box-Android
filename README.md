@@ -1,4 +1,11 @@
+<p align="center">
+  <img src="app/src/main/play_store_512.png" alt="Vectras Box logo" width="160">
+</p>
+
 # Vectras Box
+
+[![Telegram Channel](https://img.shields.io/badge/Telegram-Channel-26A5E4?logo=telegram&logoColor=white)](https://t.me/vectras_box)
+[![Telegram Chat](https://img.shields.io/badge/Telegram-Chat-26A5E4?logo=telegram&logoColor=white)](https://t.me/vectras_box_chat)
 
 Vectras Box is an Android PC emulator based on [PCBox](https://github.com/PCBox/PCBox)
 and [86Box](https://github.com/86Box/86Box). It is an independent project, not an
