@@ -1,0 +1,10 @@
+add_executable(vectras_slirp_test EXCLUDE_FROM_ALL android/tests/slirp_test.c)
+target_include_directories(vectras_slirp_test PRIVATE android/slirp)
+target_link_libraries(vectras_slirp_test PRIVATE vectras_slirp)
+target_link_options(vectras_slirp_test PRIVATE "-Wl,--wrap=get_dns_addr" "-Wl,--wrap=get_dns6_addr")
+target_compile_options(vectras_slirp_test PRIVATE -Wall -Wextra -Werror)
+
+add_library(vectras_audio_munt_test SHARED EXCLUDE_FROM_ALL android/tests/audio_munt_test.c)
+target_include_directories(vectras_audio_munt_test PRIVATE 86Box/src/include 86Box/src/sound)
+target_link_libraries(vectras_audio_munt_test PRIVATE SDL2::SDL2 mt32emu m)
+target_compile_options(vectras_audio_munt_test PRIVATE -Wall -Wextra -Werror)

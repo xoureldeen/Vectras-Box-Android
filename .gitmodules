@@ -1,0 +1,4 @@
+[submodule "app/src/main/cpp/86Box"]
+	path = app/src/main/cpp/86Box
+	url = https://github.com/PCBox/PCBox.git
+	branch = pcbox

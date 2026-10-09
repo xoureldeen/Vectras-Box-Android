@@ -1,0 +1,118 @@
+[
+  {
+    "file": "libslirp-copyright.txt",
+    "source": "https://gitlab.freedesktop.org/slirp/libslirp/-/blob/v4.9.5/COPYRIGHT"
+  },
+  {
+    "file": "libslirp-source-attributions.txt",
+    "source": "https://gitlab.freedesktop.org/slirp/libslirp/-/tree/v4.9.5/src"
+  },
+  {
+    "file": "gpl-2.0.txt",
+    "source": "app/src/main/cpp/86Box/COPYING"
+  },
+  {
+    "file": "gpl-3.0.txt",
+    "source": "COPYING"
+  },
+  {
+    "file": "sdl-2.txt",
+    "source": "app/src/main/cpp/SDL2/LICENSE.txt"
+  },
+  {
+    "file": "hidapi-bsd.txt",
+    "source": "app/src/main/cpp/SDL2/src/hidapi/LICENSE-bsd.txt"
+  },
+  {
+    "file": "hidapi-license-options.txt",
+    "source": "app/src/main/cpp/SDL2/src/hidapi/LICENSE.txt"
+  },
+  {
+    "file": "libchdr.txt",
+    "source": "app/src/main/cpp/86Box/src/cdrom/libchdr/LICENSE.txt"
+  },
+  {
+    "file": "lzma.txt",
+    "source": "app/src/main/cpp/86Box/src/cdrom/libchdr/deps/lzma-25.01/LICENSE"
+  },
+  {
+    "file": "softfloat.txt",
+    "source": "app/src/main/cpp/86Box/src/cpu/softfloat3e/COPYING.txt"
+  },
+  {
+    "file": "minivhd.txt",
+    "source": "app/src/main/cpp/86Box/src/disk/minivhd/LICENSE"
+  },
+  {
+    "file": "liblzf.txt",
+    "source": "app/src/main/cpp/86Box/src/floppy/lzf/LICENSE"
+  },
+  {
+    "file": "imgui.txt",
+    "source": "app/src/main/cpp/86Box/src/osd/imgui/LICENSE.txt"
+  },
+  {
+    "file": "ayumi.txt",
+    "source": "app/src/main/cpp/86Box/src/sound/ayumi/LICENSE"
+  },
+  {
+    "file": "resid-fp-gpl.txt",
+    "source": "app/src/main/cpp/86Box/src/sound/resid-fp/COPYING"
+  },
+  {
+    "file": "resid-fp-authors.txt",
+    "source": "app/src/main/cpp/86Box/src/sound/resid-fp/AUTHORS"
+  },
+  {
+    "file": "pcbox-authors.txt",
+    "source": "app/src/main/cpp/86Box/AUTHORS"
+  },
+  {
+    "file": "sdl-yuv2rgb.txt",
+    "source": "app/src/main/cpp/SDL2/src/video/yuv2rgb/LICENSE"
+  },
+  {
+    "file": "zlib.txt",
+    "source": "app/.cxx/Debug/38zt472a/arm64-v8a/_deps/zlib-src/LICENSE"
+  },
+  {
+    "file": "libpng.txt",
+    "source": "app/.cxx/Debug/38zt472a/arm64-v8a/_deps/libpng-src/LICENSE"
+  },
+  {
+    "file": "libsndfile-lgpl-2.1.txt",
+    "source": "app/.cxx/Debug/38zt472a/arm64-v8a/_deps/libsndfile-src/COPYING"
+  },
+  {
+    "file": "libsndfile-alac.txt",
+    "source": "app/.cxx/Debug/38zt472a/arm64-v8a/_deps/libsndfile-src/src/ALAC/LICENSE"
+  },
+  {
+    "file": "freetype-license-options.txt",
+    "source": "app/.cxx/Debug/38zt472a/arm64-v8a/_deps/freetype-src/LICENSE.TXT"
+  },
+  {
+    "file": "freetype-gpl-2.0.txt",
+    "source": "app/.cxx/Debug/38zt472a/arm64-v8a/_deps/freetype-src/docs/GPLv2.TXT"
+  },
+  {
+    "file": "freetype-ftl-alternative.txt",
+    "source": "app/.cxx/Debug/38zt472a/arm64-v8a/_deps/freetype-src/docs/FTL.TXT"
+  },
+  {
+    "file": "freetype-dlg.txt",
+    "source": "app/.cxx/Debug/38zt472a/arm64-v8a/_deps/freetype-src/subprojects/dlg/LICENSE"
+  },
+  {
+    "file": "apache-2.0.txt",
+    "source": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+  },
+  {
+    "file": "fontawesome-5.txt",
+    "source": "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/5.x/LICENSE.txt"
+  },
+  {
+    "file": "cc-by-4.0.txt",
+    "source": "https://creativecommons.org/licenses/by/4.0/legalcode.txt"
+  }
+]

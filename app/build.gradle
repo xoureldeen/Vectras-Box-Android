@@ -1,0 +1,167 @@
+plugins {
+    id 'com.android.application'
+}
+
+def licenseAssets = layout.buildDirectory.dir('generated/licenseAssets')
+
+def generateLicenseAssets = tasks.register('generateLicenseAssets') {
+    inputs.dir(rootProject.file('licenses'))
+    inputs.file(rootProject.file('THIRD_PARTY_NOTICES.md'))
+    inputs.file(rootProject.file('PRIVACYANDPOLICY.md'))
+    inputs.file(rootProject.file('TERMSANDCONDITIONS.md'))
+    inputs.files(fileTree('src/main/cpp/86Box/src'), fileTree('src/main/cpp/SDL2/src'), fileTree('src/main/cpp/android'))
+    outputs.dir(licenseAssets)
+
+    doLast {
+        def output = licenseAssets.get().dir('licenses').asFile
+        output.mkdirs()
+        copy {
+            from rootProject.file('PRIVACYANDPOLICY.md'), rootProject.file('TERMSANDCONDITIONS.md')
+            into licenseAssets.get().dir('legal').asFile
+        }
+        copy {
+            from rootProject.file('licenses')
+            include '*.txt'
+            into output
+        }
+        copy {
+            from rootProject.file('THIRD_PARTY_NOTICES.md')
+            into output
+            rename { 'component-notices.txt' }
+        }
+
+        def entries = new TreeMap<String, List<String>>()
+        def comments = ~/(?s)\/\*.*?\*\//
+        def legal = ~/(?i)copyright|redistribution and use|permission is hereby granted|general public license|SPDX-License-Identifier/
+        ['src/main/cpp/86Box/src', 'src/main/cpp/SDL2/src', 'src/main/cpp/android'].each { sourceRoot ->
+            fileTree(sourceRoot) {
+                include '**/*.c', '**/*.h', '**/*.cpp', '**/*.cc', '**/*.hpp'
+            }.files.sort { it.path }.each { source ->
+                def relative = rootProject.projectDir.toPath().relativize(source.toPath()).toString().replace('\\', '/')
+                (source.getText('UTF-8') =~ comments).each { comment ->
+                    if (comment =~ legal) {
+                        if (!entries.containsKey(comment)) entries[comment] = []
+                        entries[comment].add(relative)
+                    }
+                }
+            }
+        }
+        new File(output, 'native-source-attributions.txt').withWriter('UTF-8') { writer ->
+            writer.write('Copyright and license notices reproduced from the bundled native source.\n')
+            writer.write('This includes notices for source files that may not be compiled on Android.\n\n')
+            entries.each { notice, sources ->
+                writer.write(sources.join('\n'))
+                writer.write('\n\n')
+                writer.write(notice)
+                writer.write('\n\n')
+            }
+        }
+    }
+}
+
+android {
+    namespace 'com.xoureldeen.vectrasbox'
+    compileSdk 35
+    ndkVersion '26.1.10909125'
+
+    defaultConfig {
+        applicationId 'com.xoureldeen.vectrasbox'
+        minSdk 24
+        targetSdk 35
+        versionCode 2
+        versionName '1.0.1 alpha'
+
+        ndk {
+            abiFilters 'arm64-v8a'
+        }
+
+        externalNativeBuild {
+            cmake {
+                arguments '-DANDROID_STL=c++_shared', '-DVECTRAS_BUILD_BACKEND_TESTS=OFF'
+                cppFlags '-std=c++17'
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    sourceSets.main.assets.srcDir(licenseAssets)
+
+    externalNativeBuild {
+        cmake {
+            path file('src/main/cpp/CMakeLists.txt')
+            version '3.22.1'
+        }
+    }
+}
+
+tasks.named('preBuild').configure { dependsOn(generateLicenseAssets) }
+
+tasks.register('prepareCorrespondingSource', Zip) {
+    dependsOn(tasks.named('assembleDebug'))
+    archiveFileName = 'vectras-box-corresponding-source.zip'
+    destinationDirectory = layout.buildDirectory.dir('distributions')
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+
+    ['.gitmodules', '.gitignore', '.gitattributes'].each { metadataFile ->
+        inputs.file(rootProject.file(metadataFile)).optional()
+        from({
+            def source = rootProject.file(metadataFile)
+            source.exists() ? resources.text.fromString(source.getText('UTF-8')).asFile('UTF-8') : []
+        }) {
+            rename { metadataFile }
+        }
+    }
+
+    from(rootProject.projectDir) {
+        include 'app/src/**', 'app/build.gradle', 'app/proguard-rules.pro'
+        include 'gradle/wrapper/**', 'gradlew', 'gradlew.bat'
+        include 'build.gradle', 'settings.gradle', 'gradle.properties'
+        include 'COPYING', '*.md', 'licenses/**', '.gitignore', '.gitattributes', '.gitmodules'
+        exclude '**/.git/**', '**/.git', '**/build/**', '**/.cxx/**'
+    }
+
+    ['zlib', 'libpng', 'freetype', 'libsndfile', 'libslirp'].each { dependency ->
+        from({
+            def roots = fileTree('.cxx/Debug') {
+                include dependency == 'libslirp' ? "**/_deps/${dependency}-src/meson.build" : "**/_deps/${dependency}-src/CMakeLists.txt"
+            }.files.collect { it.parentFile }.unique()
+            if (roots.isEmpty()) {
+                def bundled = rootProject.file("native-dependencies/${dependency}")
+                if (bundled.isDirectory()) return bundled
+                throw new GradleException("Missing corresponding source for ${dependency}. Build the app before preparing the source release.")
+            }
+            if (roots.size() > 1) {
+                def revisions = roots.collect { source ->
+                    providers.exec {
+                        commandLine 'git', '-C', source.absolutePath, 'rev-parse', 'HEAD'
+                    }.standardOutput.asText.get().trim()
+                }.unique()
+                if (revisions.size() != 1) {
+                    throw new GradleException("Fetched source revisions differ for ${dependency}; use one verified native build for the source release.")
+                }
+            }
+            roots.sort { it.absolutePath }[0]
+        }) {
+            into "native-dependencies/${dependency}"
+            exclude '**/.git/**', '**/.git'
+        }
+    }
+}
+
+dependencies {
+    implementation 'com.google.android.material:material:1.14.0'
+    implementation 'androidx.drawerlayout:drawerlayout:1.2.0'
+    testImplementation 'junit:junit:4.13.2'
+}
