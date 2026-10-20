@@ -16,3 +16,16 @@ dependencyResolutionManagement {
 
 rootProject.name = 'VectrasBox'
 include ':app'
+def controlsRoot = file('dependencies/vectras-controls')
+if (!new File(controlsRoot, 'controls/build.gradle').isFile()) {
+    throw new GradleException('Clone the pinned Vectras-Controls dependency as described in README.md.')
+}
+def controlsLock = new Properties()
+file('controls-dependency.properties').withInputStream { controlsLock.load(it) }
+def controlsHead = new File(controlsRoot, '.git/HEAD')
+def controlsRevision = controlsHead.isFile() ? controlsHead : new File(controlsRoot, 'source-revision.txt')
+if (!controlsRevision.isFile() || controlsRevision.text.trim() != controlsLock.getProperty('revision')) {
+    throw new GradleException('Controls dependency differs from controls-dependency.properties; check out the pinned revision.')
+}
+include ':controls'
+project(':controls').projectDir = new File(controlsRoot, 'controls')

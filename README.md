@@ -35,12 +35,16 @@ This project is experimental; some desktop features are unavailable on Android.
 
 ## Build from source
 
-Open the project in Android Studio with JDK 17, Android SDK 35, CMake 3.22.1,
-and Android NDK 26.1.10909125 installed.
+Open the project in Android Studio with JDK 21, Android SDK 36, CMake 3.22.1,
+and Android NDK 28.2.13676358 installed. The shared controls dependency is pinned
+in `controls-dependency.properties`; access to the team's private controls
+repository is required when building from Git.
 
 ```text
 git clone --recurse-submodules https://github.com/xoureldeen/Vectras-Box-Android.git
 cd Vectras-Box-Android
+git clone https://github.com/xoureldeen/Vectras-Controls.git dependencies/vectras-controls
+git -C dependencies/vectras-controls checkout --detach 301584f352e9d9c91a9bbf5e4fd0a41c5b7f2806
 ./gradlew assembleDebug
 ```
 

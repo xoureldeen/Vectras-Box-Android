@@ -1,0 +1,13 @@
+<resources>
+    <style name="Widget.VectrasBox.ToolbarIcon" parent="Widget.AppCompat.ImageButton">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:background">@drawable/controls_button</item>
+        <item name="android:backgroundTint">?attr/colorPrimary</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:scaleType">centerInside</item>
+        <item name="android:focusable">true</item>
+        <item name="tint">?attr/colorPrimary</item>
+    </style>
+</resources>

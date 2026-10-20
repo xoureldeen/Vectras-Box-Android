@@ -4,7 +4,13 @@ plugins {
 
 def licenseAssets = layout.buildDirectory.dir('generated/licenseAssets')
 
-def generateLicenseAssets = tasks.register('generateLicenseAssets') {
+abstract class GenerateLicenseAssets extends DefaultTask {
+    @OutputDirectory
+    abstract DirectoryProperty getOutputDirectory()
+}
+
+def generateLicenseAssets = tasks.register('generateLicenseAssets', GenerateLicenseAssets) {
+    outputDirectory.set(licenseAssets)
     inputs.dir(rootProject.file('licenses'))
     inputs.file(rootProject.file('THIRD_PARTY_NOTICES.md'))
     inputs.file(rootProject.file('PRIVACYANDPOLICY.md'))
@@ -61,8 +67,8 @@ def generateLicenseAssets = tasks.register('generateLicenseAssets') {
 
 android {
     namespace 'com.xoureldeen.vectrasbox'
-    compileSdk 35
-    ndkVersion '26.1.10909125'
+    compileSdk 36
+    ndkVersion '28.2.13676358'
 
     defaultConfig {
         applicationId 'com.xoureldeen.vectrasbox'
@@ -70,6 +76,7 @@ android {
         targetSdk 35
         versionCode 2
         versionName '1.0.1 alpha'
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         ndk {
             abiFilters 'arm64-v8a'
@@ -95,13 +102,17 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 
-    sourceSets.main.assets.srcDir(licenseAssets)
-
     externalNativeBuild {
         cmake {
             path file('src/main/cpp/CMakeLists.txt')
             version '3.22.1'
         }
+    }
+}
+
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        variant.sources.assets.addGeneratedSourceDirectory(generateLicenseAssets) { it.outputDirectory }
     }
 }
 
@@ -128,6 +139,7 @@ tasks.register('prepareCorrespondingSource', Zip) {
         include 'app/src/**', 'app/build.gradle', 'app/proguard-rules.pro'
         include 'gradle/wrapper/**', 'gradlew', 'gradlew.bat'
         include 'build.gradle', 'settings.gradle', 'gradle.properties'
+        include 'controls-dependency.properties'
         include 'COPYING', '*.md', 'licenses/**', '.gitignore', '.gitattributes', '.gitmodules'
         exclude '**/.git/**', '**/.git', '**/build/**', '**/.cxx/**'
     }
@@ -158,10 +170,22 @@ tasks.register('prepareCorrespondingSource', Zip) {
             exclude '**/.git/**', '**/.git'
         }
     }
+    from(rootProject.file('dependencies/vectras-controls/controls')) {
+        into 'dependencies/vectras-controls/controls'
+        exclude '**/build/**', '**/.gradle/**'
+    }
+    from(resources.text.fromString(rootProject.file('controls-dependency.properties').text.readLines()
+        .find { it.startsWith('revision=') }.substring('revision='.length())).asFile('UTF-8')) {
+        into 'dependencies/vectras-controls'
+        rename { 'source-revision.txt' }
+    }
 }
 
 dependencies {
+    implementation project(':controls')
     implementation 'com.google.android.material:material:1.14.0'
     implementation 'androidx.drawerlayout:drawerlayout:1.2.0'
     testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test:runner:1.7.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.3.0'
 }

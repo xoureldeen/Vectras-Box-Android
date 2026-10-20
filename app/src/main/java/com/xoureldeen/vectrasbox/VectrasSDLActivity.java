@@ -6,19 +6,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.widget.PopupMenu;
 
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.xoureldeen.vectrasbox.controls.EditableControlsLayout;
 import com.xoureldeen.vectrasbox.data.MachineStore;
 
 import org.libsdl.app.SDLActivity;
@@ -27,16 +23,16 @@ import org.libsdl.app.SDLSurface;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class VectrasSDLActivity extends SDLActivity {
     public static final String EXTRA_MACHINE_ID = "machine_id";
     private static final int PICK_ISO = 1001;
-    private final Set<Integer> heldKeys = new HashSet<>();
+    private final PcBoxInput pcInput = new PcBoxInput((code, down) -> {
+        if (down) SDLActivity.onNativeKeyDown(code); else SDLActivity.onNativeKeyUp(code);
+    }, (state, action) -> SDLActivity.onNativeMouse(state, action, 0f, 0f, true));
     private final ExecutorService mediaWorker = Executors.newSingleThreadExecutor();
     private final Handler uiHandler = new Handler(Looper.getMainLooper());
     private MachineStore machineStore;
@@ -46,10 +42,7 @@ public class VectrasSDLActivity extends SDLActivity {
     private boolean commandPending;
     private boolean importing;
 
-    private EditableControlsLayout editableControls;
-    private View controlsToolbar;
-    private MaterialButton controlsToggle;
-    private MaterialButton editControlsButton;
+    private PcBoxControls controls;
 
     @Override
     protected SDLSurface createSDLSurface(Context context) {
@@ -118,162 +111,35 @@ public class VectrasSDLActivity extends SDLActivity {
     }
 
     private void installControls() {
-        View overlay = LayoutInflater.from(this).inflate(R.layout.activity_vectras_sdl, mLayout, false);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
-        mLayout.addView(overlay, params);
-
-        editableControls = overlay.findViewById(R.id.editable_controls);
-        controlsToolbar = overlay.findViewById(R.id.controls_toolbar);
-        controlsToggle = overlay.findViewById(R.id.controls_toggle);
-        editControlsButton = overlay.findViewById(R.id.edit_controls_button);
-
-        wireHold(overlay, R.id.up_button, KeyEvent.KEYCODE_DPAD_UP);
-        wireHold(overlay, R.id.down_button, KeyEvent.KEYCODE_DPAD_DOWN);
-        wireHold(overlay, R.id.left_button, KeyEvent.KEYCODE_DPAD_LEFT);
-        wireHold(overlay, R.id.right_button, KeyEvent.KEYCODE_DPAD_RIGHT);
-        wireHold(overlay, R.id.enter_button, KeyEvent.KEYCODE_ENTER);
-        wireHold(overlay, R.id.ctrl_button, KeyEvent.KEYCODE_CTRL_LEFT);
-        wireHold(overlay, R.id.tab_button, KeyEvent.KEYCODE_TAB);
-        wireHold(overlay, R.id.space_button, KeyEvent.KEYCODE_SPACE);
-        wireHold(overlay, R.id.e_button, KeyEvent.KEYCODE_E);
-        wireHold(overlay, R.id.q_button, KeyEvent.KEYCODE_Q);
-        wireHold(overlay, R.id.r_button, KeyEvent.KEYCODE_R);
-        wireHold(overlay, R.id.x_button, KeyEvent.KEYCODE_X);
-        wireHold(overlay, R.id.del_button, KeyEvent.KEYCODE_FORWARD_DEL);
-
-        wireHold(overlay, R.id.esc_button, KeyEvent.KEYCODE_ESCAPE);
-        wireHold(overlay, R.id.f8_button, KeyEvent.KEYCODE_F8);
-        wireHold(overlay, R.id.f10_button, KeyEvent.KEYCODE_F10);
-        wireHold(overlay, R.id.c_button, KeyEvent.KEYCODE_C);
-        wireHold(overlay, R.id.d_button, KeyEvent.KEYCODE_D);
-        wireHold(overlay, R.id.pgup_button, KeyEvent.KEYCODE_PAGE_UP);
-        wireHold(overlay, R.id.pgdn_button, KeyEvent.KEYCODE_PAGE_DOWN);
-        wireHold(overlay, R.id.shift_button, KeyEvent.KEYCODE_SHIFT_LEFT);
-        wireHold(overlay, R.id.alt_button, KeyEvent.KEYCODE_ALT_LEFT);
-
-        overlay.findViewById(R.id.hide_controls_button).setOnClickListener(view -> {
-            haptic(view);
-            setControlsVisible(false);
-        });
-        controlsToggle.setOnClickListener(view -> {
-            haptic(view);
-            setControlsVisible(true);
-        });
-        editControlsButton.setOnClickListener(view -> toggleEditMode());
-        editControlsButton.setOnLongClickListener(view -> {
-            haptic(view);
-            showResetDialog();
-            return true;
-        });
-
-        View keyboardButton = overlay.findViewById(R.id.keyboard_button);
-        keyboardButton.setOnClickListener(view -> {
-            haptic(view);
+        ViewGroup overlay = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.activity_vectras_sdl, mLayout, false);
+        mLayout.addView(overlay, new RelativeLayout.LayoutParams(-1, -1));
+        controls = new PcBoxControls(this, overlay, pcInput, this::focusEmulator);
+        if (mSurface instanceof EmulatorSurface) ((EmulatorSurface) mSurface).setControlInput(pcInput);
+        View keyboard = overlay.findViewById(R.id.keyboard_button);
+        keyboard.setOnClickListener(view -> {
+            releaseAllKeys();
             SDLActivity.showTextInput(0, 0, 1, 1);
         });
-        keyboardButton.setOnLongClickListener(view -> {
-            haptic(view);
+        keyboard.setOnLongClickListener(view -> {
             releaseAllKeys();
             pressKey(KeyEvent.KEYCODE_F10);
             focusEmulator();
             return true;
         });
-        View menuButton = overlay.findViewById(R.id.menu_button);
-        menuButton.setOnClickListener(view -> {
-            haptic(view);
-            releaseAllKeys();
-            showMachineMenu(view);
-        });
-        menuButton.setOnLongClickListener(view -> {
-            haptic(view);
+        View menu = overlay.findViewById(R.id.menu_button);
+        menu.setOnClickListener(view -> { releaseAllKeys(); showMachineMenu(view); });
+        menu.setOnLongClickListener(view -> {
             releaseAllKeys();
             pressKey(KeyEvent.KEYCODE_ESCAPE);
             focusEmulator();
             return true;
         });
-        overlay.findViewById(R.id.cad_button).setOnClickListener(view -> {
-            haptic(view);
-            releaseAllKeys();
-            keyDown(KeyEvent.KEYCODE_CTRL_LEFT);
-            keyDown(KeyEvent.KEYCODE_ALT_LEFT);
-            pressKey(KeyEvent.KEYCODE_FORWARD_DEL);
-            keyUp(KeyEvent.KEYCODE_ALT_LEFT);
-            keyUp(KeyEvent.KEYCODE_CTRL_LEFT);
-            focusEmulator();
-        });
-    }
-
-    private void wireHold(View root, int viewId, int keyCode) {
-        View button = root.findViewById(viewId);
-        button.setOnTouchListener((view, event) -> {
-            switch (event.getActionMasked()) {
-                case MotionEvent.ACTION_DOWN:
-                    haptic(view);
-                    view.setPressed(true);
-                    view.animate().cancel();
-                    view.animate().scaleX(0.82f).scaleY(0.82f).setDuration(70).start();
-                    keyDown(keyCode);
-                    return true;
-                case MotionEvent.ACTION_UP:
-                case MotionEvent.ACTION_CANCEL:
-                    view.setPressed(false);
-                    view.animate().cancel();
-                    view.animate().scaleX(1f).scaleY(1f).setDuration(90).start();
-                    keyUp(keyCode);
-                    focusEmulator();
-                    return true;
-                default:
-                    return true;
-            }
-        });
-    }
-
-    private void toggleEditMode() {
-        if (editableControls == null) {
-            return;
+        overlay.findViewById(R.id.stop_machine_button).setOnClickListener(view -> showStopDialog());
+        for (int id : new int[]{R.id.menu_button, R.id.edit_controls_button, R.id.keyboard_button,
+                R.id.hide_controls_button, R.id.stop_machine_button, R.id.controls_toggle}) {
+            View button = overlay.findViewById(id);
+            androidx.core.view.ViewCompat.setTooltipText(button, button.getContentDescription());
         }
-        boolean editing = !editableControls.isEditMode();
-        releaseAllKeys();
-        editableControls.setEditMode(editing);
-        editControlsButton.setText(editing ? R.string.finish_editing : R.string.edit_controls);
-        Toast.makeText(this,
-                editing ? R.string.edit_controls_hint : R.string.controls_saved,
-                Toast.LENGTH_SHORT).show();
-    }
-
-    private void showResetDialog() {
-        new MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.reset_controls)
-                .setMessage(R.string.reset_controls_message)
-                .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(R.string.reset_controls, (dialog, which) -> {
-                    releaseAllKeys();
-                    editableControls.setEditMode(false);
-                    editableControls.resetSavedPositions();
-                    editControlsButton.setText(R.string.edit_controls);
-                    Toast.makeText(this, R.string.controls_reset, Toast.LENGTH_SHORT).show();
-                })
-                .show();
-    }
-
-    private void setControlsVisible(boolean visible) {
-        releaseAllKeys();
-        if (editableControls != null) {
-            editableControls.setEditMode(false);
-            editableControls.setVisibility(visible ? View.VISIBLE : View.GONE);
-        }
-        if (editControlsButton != null) {
-            editControlsButton.setText(R.string.edit_controls);
-        }
-        if (controlsToolbar != null) {
-            controlsToolbar.setVisibility(visible ? View.VISIBLE : View.GONE);
-        }
-        if (controlsToggle != null) {
-            controlsToggle.setVisibility(visible ? View.GONE : View.VISIBLE);
-        }
-        focusEmulator();
     }
 
     private void pressKey(int keyCode) {
@@ -281,24 +147,13 @@ public class VectrasSDLActivity extends SDLActivity {
         keyUp(keyCode);
     }
 
-    private void keyDown(int keyCode) {
-        if (heldKeys.add(keyCode)) {
-            SDLActivity.onNativeKeyDown(keyCode);
-        }
-    }
+    private void keyDown(int keyCode) { pcInput.toolbarKey(keyCode, true); }
 
-    private void keyUp(int keyCode) {
-        if (heldKeys.remove(keyCode)) {
-            SDLActivity.onNativeKeyUp(keyCode);
-        }
-    }
+    private void keyUp(int keyCode) { pcInput.toolbarKey(keyCode, false); }
 
     private void releaseAllKeys() {
-        Integer[] keys = heldKeys.toArray(new Integer[0]);
-        for (int keyCode : keys) {
-            SDLActivity.onNativeKeyUp(keyCode);
-        }
-        heldKeys.clear();
+        if (controls != null) controls.releaseInputs();
+        else pcInput.releaseAll();
     }
 
     private void focusEmulator() {
@@ -307,12 +162,24 @@ public class VectrasSDLActivity extends SDLActivity {
         }
     }
 
-    private void haptic(View view) {
-        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
+    @Override public boolean dispatchKeyEvent(KeyEvent event) {
+        if (controls != null && controls.isEditing()) {
+            if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+                if (event.getAction() == KeyEvent.ACTION_UP) controls.closeEditor();
+            } else getWindow().superDispatchKeyEvent(event);
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+    @Override public void onWindowFocusChanged(boolean hasFocus) {
+        if (!hasFocus) releaseAllKeys();
+        super.onWindowFocusChanged(hasFocus);
     }
 
     @Override
     protected void onPause() {
+        if (controls != null) controls.closeEditor();
         releaseAllKeys();
         super.onPause();
     }
@@ -335,6 +202,7 @@ public class VectrasSDLActivity extends SDLActivity {
         popup.getMenu().add(0, 5, 0, "PCBox settings");
         popup.getMenu().add(0, 6, 0, "Restart machine…");
         popup.getMenu().add(0, 7, 0, "Stop and return to library…");
+        popup.getMenu().add(0, 8, 0, getString(com.vectras.controls.R.string.controls_options));
         popup.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case 1:
@@ -372,6 +240,9 @@ public class VectrasSDLActivity extends SDLActivity {
                     return true;
                 case 7:
                     showStopDialog();
+                    return true;
+                case 8:
+                    controls.edit(true);
                     return true;
                 default:
                     return false;
@@ -471,7 +342,7 @@ public class VectrasSDLActivity extends SDLActivity {
 
     private void showSpecialKeys() {
         String[] names = {"Esc", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",
-                "Delete", "Backspace", "Insert", "Home", "End", "Page Up", "Page Down", "Windows", "Alt + Tab"};
+                "Delete", "Backspace", "Insert", "Home", "End", "Page Up", "Page Down", "Windows", "Alt + Tab", "Ctrl + Alt + Del"};
         int[] codes = {KeyEvent.KEYCODE_ESCAPE, KeyEvent.KEYCODE_F1, KeyEvent.KEYCODE_F2, KeyEvent.KEYCODE_F3,
                 KeyEvent.KEYCODE_F4, KeyEvent.KEYCODE_F5, KeyEvent.KEYCODE_F6, KeyEvent.KEYCODE_F7,
                 KeyEvent.KEYCODE_F8, KeyEvent.KEYCODE_F9, KeyEvent.KEYCODE_F10, KeyEvent.KEYCODE_F11,
@@ -481,7 +352,13 @@ public class VectrasSDLActivity extends SDLActivity {
         new MaterialAlertDialogBuilder(this).setTitle("Send key")
                 .setItems(names, (dialog, which) -> {
                     releaseAllKeys();
-                    if (which == codes.length) {
+                    if (which == codes.length + 1) {
+                        keyDown(KeyEvent.KEYCODE_CTRL_LEFT);
+                        keyDown(KeyEvent.KEYCODE_ALT_LEFT);
+                        pressKey(KeyEvent.KEYCODE_FORWARD_DEL);
+                        keyUp(KeyEvent.KEYCODE_ALT_LEFT);
+                        keyUp(KeyEvent.KEYCODE_CTRL_LEFT);
+                    } else if (which == codes.length) {
                         keyDown(KeyEvent.KEYCODE_ALT_LEFT);
                         pressKey(KeyEvent.KEYCODE_TAB);
                         keyUp(KeyEvent.KEYCODE_ALT_LEFT);
@@ -503,11 +380,12 @@ public class VectrasSDLActivity extends SDLActivity {
     }
 
     @Override public void onBackPressed() {
+        if (controls != null && controls.closeEditor()) return;
         showStopDialog();
     }
 
     @Override public void superOnBackPressed() {
-        showStopDialog();
+        onBackPressed();
     }
 
     @Override protected void onNewIntent(Intent intent) {
@@ -523,6 +401,8 @@ public class VectrasSDLActivity extends SDLActivity {
     }
 
     @Override protected void onDestroy() {
+        if (controls != null) controls.closeEditor();
+        releaseAllKeys();
         uiHandler.removeCallbacksAndMessages(null);
         mediaWorker.shutdownNow();
 

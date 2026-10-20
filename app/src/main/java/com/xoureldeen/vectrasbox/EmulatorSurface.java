@@ -22,6 +22,7 @@ public final class EmulatorSurface extends SDLSurface {
     private long downTime;
     private int maxPointers;
     private boolean moved;
+    private PcBoxInput controlInput;
 
     public EmulatorSurface(Context context) {
         super(context);
@@ -29,6 +30,8 @@ public final class EmulatorSurface extends SDLSurface {
         touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         scrollStep = 28f * density;
     }
+
+    void setControlInput(PcBoxInput input) { controlInput = input; }
 
     @Override
     public boolean onTouch(View view, MotionEvent event) {
@@ -107,7 +110,11 @@ public final class EmulatorSurface extends SDLSurface {
         return sum / event.getPointerCount();
     }
 
-    private static void sendClick(int buttonState) {
+    private void sendClick(int buttonState) {
+        if (controlInput != null) {
+            controlInput.click(buttonState == MotionEvent.BUTTON_SECONDARY ? 3 : 1);
+            return;
+        }
         SDLActivity.onNativeMouse(buttonState, MotionEvent.ACTION_DOWN, 0f, 0f, true);
         SDLActivity.onNativeMouse(0, MotionEvent.ACTION_UP, 0f, 0f, true);
     }
