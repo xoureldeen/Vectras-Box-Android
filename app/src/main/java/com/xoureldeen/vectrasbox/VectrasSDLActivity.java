@@ -179,7 +179,7 @@ public class VectrasSDLActivity extends SDLActivity {
 
     @Override
     protected void onPause() {
-        if (controls != null) controls.closeEditor();
+        if (controls != null) controls.pause();
         releaseAllKeys();
         super.onPause();
     }

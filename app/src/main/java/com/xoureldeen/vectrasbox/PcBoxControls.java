@@ -39,6 +39,7 @@ final class PcBoxControls {
         this.focus = focus;
         store = new ControlLayoutStore(context);
         overlay = root.findViewById(R.id.editable_controls);
+        overlay.setThemeOptions(ControlsAppearance.options);
         toolbar = root.findViewById(R.id.controls_toolbar);
         toggle = root.findViewById(R.id.controls_toggle);
         overlay.setSink(new ControlInputSink() {
@@ -53,8 +54,7 @@ final class PcBoxControls {
         root.findViewById(R.id.hide_controls_button).setOnClickListener(view -> setVisible(false));
         toggle.setOnClickListener(view -> setVisible(true));
         overlay.addOnLayoutChangeListener((view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
-            if (right - left != oldRight - oldLeft || bottom - top != oldBottom - oldTop) {
-                closeEditor();
+            if (editor == null && (right - left != oldRight - oldLeft || bottom - top != oldBottom - oldTop)) {
                 refresh();
             }
         });
@@ -72,7 +72,7 @@ final class PcBoxControls {
         for (ControlItem item : ControlPresets.INSTANCE.runner(width, height, 48f)) {
             result.add(item.getKind() == ControlKind.JOYSTICK ? item.copy(item.getId(), item.getKind(), item.getKeyCode(),
                 item.getX(), item.getY(), item.getSizeDp(), item.getSticky(), JoystickMapping.ARROWS,
-                item.getAspectRatio(), item.getDeadZone(), item.getDiagonals()) : item);
+                item.getAspectRatio(), item.getDeadZone(), item.getDiagonals(), item.getOpacity()) : item);
         }
         return result;
     }
@@ -112,7 +112,7 @@ final class PcBoxControls {
         overlay.setVisibility(View.INVISIBLE);
         toolbar.setVisibility(View.INVISIBLE);
         toggle.setVisibility(View.GONE);
-        editor = new ControlsEditor(context, store).show(root, profile(), overlay.snapshot(),
+        editor = new ControlsEditor(overlay.themeContext(), store).show(root, profile(), overlay.snapshot(),
             this::defaults, saved -> {
                 editor = null;
                 overlay.setVisibility(visible ? View.VISIBLE : View.GONE);
@@ -148,6 +148,10 @@ final class PcBoxControls {
     }
 
     boolean isEditing() { return editor != null; }
+    void pause() {
+        releaseInputs();
+        if (editor == null || !editor.isTransferring()) closeEditor();
+    }
     boolean closeEditor() {
         if (editor == null) return false;
         editor.dismiss();

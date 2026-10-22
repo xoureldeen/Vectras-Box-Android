@@ -124,6 +124,19 @@ tasks.register('prepareCorrespondingSource', Zip) {
     destinationDirectory = layout.buildDirectory.dir('distributions')
     preserveFileTimestamps = false
     reproducibleFileOrder = true
+    includeEmptyDirs = false
+    eachFile { entry ->
+        def path = entry.path.replace('\\', '/').toLowerCase(Locale.ROOT)
+        if (path.startsWith('dependencies/') || path.startsWith('controls/') ||
+            path.contains('/com/vectras/controls/') || path.endsWith('.aar') ||
+            path.tokenize('/').contains('vectras-controls')) {
+            throw new GradleException('Private controls dependency must not be included in the public source archive.')
+        }
+        if ((path.endsWith('.kt') || path.endsWith('.java')) &&
+            (entry.file.getText('UTF-8') =~ /(?m)^\s*package\s+com\.vectras\.controls(?:[.\s;]|$)/)) {
+            throw new GradleException('Private controls implementation must not be included in the public source archive.')
+        }
+    }
 
     ['.gitmodules', '.gitignore', '.gitattributes'].each { metadataFile ->
         inputs.file(rootProject.file(metadataFile)).optional()
@@ -169,15 +182,6 @@ tasks.register('prepareCorrespondingSource', Zip) {
             into "native-dependencies/${dependency}"
             exclude '**/.git/**', '**/.git'
         }
-    }
-    from(rootProject.file('dependencies/vectras-controls/controls')) {
-        into 'dependencies/vectras-controls/controls'
-        exclude '**/build/**', '**/.gradle/**'
-    }
-    from(resources.text.fromString(rootProject.file('controls-dependency.properties').text.readLines()
-        .find { it.startsWith('revision=') }.substring('revision='.length())).asFile('UTF-8')) {
-        into 'dependencies/vectras-controls'
-        rename { 'source-revision.txt' }
     }
 }
 

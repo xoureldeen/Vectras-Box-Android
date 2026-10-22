@@ -26,7 +26,7 @@ final class PcBoxControlsMigration {
                 float x = ((Number) rawX).floatValue(), y = ((Number) rawY).floatValue();
                 if (Float.isFinite(x) && Float.isFinite(y)) item = item.copy(item.getId(), item.getKind(), item.getKeyCode(),
                     Math.max(0f, Math.min(1f, x)), Math.max(0f, Math.min(1f, y)), item.getSizeDp(), item.getSticky(),
-                    item.getMapping(), item.getAspectRatio(), item.getDeadZone(), item.getDiagonals());
+                    item.getMapping(), item.getAspectRatio(), item.getDeadZone(), item.getDiagonals(), item.getOpacity());
             }
             migrated.add(item);
         }

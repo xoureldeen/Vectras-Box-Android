@@ -1,0 +1,9 @@
+{
+  "source_archive": "vectras-box.zip",
+  "source_sha256": "94749254e0fb950e72b30042c238bd2ef422b27a769b607d75e39f630ff7a0c5",
+  "launcher": "android/res",
+  "store_icon": "android/play_store_512.png",
+  "tv_banner": "androidtv/res/drawable-xhdpi/tv_banner.png",
+  "web_icons": "web",
+  "notification_icon": "ic_stat_app: white alpha mask derived from the supplied monochrome launcher, cropped and scaled to 24 dp"
+}

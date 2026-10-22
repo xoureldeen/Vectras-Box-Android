@@ -3,6 +3,8 @@
 build/
 .kotlin/
 /dependencies/
+/controls/
+*.aar
 *.ps1
 
 # Local configuration file (sdk path, etc)

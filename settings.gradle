@@ -23,8 +23,7 @@ if (!new File(controlsRoot, 'controls/build.gradle').isFile()) {
 def controlsLock = new Properties()
 file('controls-dependency.properties').withInputStream { controlsLock.load(it) }
 def controlsHead = new File(controlsRoot, '.git/HEAD')
-def controlsRevision = controlsHead.isFile() ? controlsHead : new File(controlsRoot, 'source-revision.txt')
-if (!controlsRevision.isFile() || controlsRevision.text.trim() != controlsLock.getProperty('revision')) {
+if (!controlsHead.isFile() || controlsHead.text.trim() != controlsLock.getProperty('revision')) {
     throw new GradleException('Controls dependency differs from controls-dependency.properties; check out the pinned revision.')
 }
 include ':controls'
